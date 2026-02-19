@@ -3,407 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Journey Collage</title>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <title>Dynamic Scrapbook Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f4f4f0;
-            --text-main: #1a1a1a;
-            --accent-yellow: #ffde59;
-            --accent-blue: #5e17eb;
-            --accent-red: #ff3131;
+            --bg-color: #fdfdfc;
+            --text-main: #222;
+            --doodle-yellow: #f4d03f;
+            --pin-red: #e74c3c;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Space Grotesk', sans-serif;
             overflow-x: hidden;
-            scroll-behavior: smooth;
         }
 
-        /* Typography */
-        h1, h2, h3 {
-            font-family: 'Caveat', cursive;
-            line-height: 1;
+        /* Typography & Shared Styles */
+        .handwritten {
+            font-family: 'Patrick Hand', cursive;
+            color: #333;
+            text-shadow: 2px 2px 0px var(--doodle-yellow), 4px 4px 0px rgba(0,0,0,0.1);
         }
 
-        p {
+        .text-block {
             font-size: 1.1rem;
             line-height: 1.6;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border: 2px solid #000;
-            box-shadow: 6px 6px 0px #000;
+            color: #444;
+            background: transparent;
         }
 
-        /* Chaotic Containers */
+        .img-ph {
+            object-fit: cover;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Chaotic floating animation variable */
+            animation: float 6s ease-in-out infinite alternate;
+        }
+
+        .img-ph:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            box-shadow: 10px 10px 25px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
         section {
             position: relative;
-            min-height: 100vh;
             width: 100vw;
-            padding: 50px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 4px dashed #ccc;
+            min-height: 100vh;
+            border-bottom: 2px dashed #ddd;
             overflow: hidden;
+            padding: 20px;
         }
 
-        .img-placeholder {
-            background: #ddd;
-            border: 3px solid #000;
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.9);
-            object-fit: cover;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* Setup for JS Parallax */
-            --px: 0px;
-            --py: 0px;
-            --rot: 0deg;
-            transform: translate(var(--px), var(--py)) rotate(var(--rot));
-        }
-
-        .img-placeholder:hover {
-            z-index: 100 !important;
-            box-shadow: 15px 15px 0px var(--accent-yellow);
-            --rot: 0deg !important; /* Straighten on hover */
-        }
-
-        .marker-text {
-            position: absolute;
-            font-size: 5rem;
-            color: #000;
-            text-shadow: 4px 4px 0px var(--accent-yellow);
-            z-index: 50;
-            pointer-events: none;
-        }
-
-        /* --- Section 1: Week 1 (Based on Image 1) --- */
-        #sec-week1 .center-dude {
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            z-index: 10;
-        }
-        #sec-week1 .desktop-ui {
-            position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 400px;
-            height: 250px;
-            z-index: 5;
-        }
-        #sec-week1 .mobile-ui {
-            position: absolute;
-            top: 15%;
-            right: 15%;
-            width: 200px;
-            height: 400px;
-            border-radius: 20px;
-            z-index: 6;
-        }
-        #sec-week1 .text-block {
-            position: absolute;
-            bottom: 10%;
-            right: 10%;
-            max-width: 400px;
-            z-index: 20;
-        }
-        #sec-week1 .marker-title {
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-10deg);
-            font-size: 8rem;
-        }
-
-        /* --- Section 2: Location Map (Based on Image 2) --- */
-        #sec-location .title {
-            top: 5%;
-            left: 10%;
-            transform: rotate(-5deg);
-        }
-        #sec-location .polaroid {
-            background: white;
-            padding: 10px 10px 40px 10px;
-            border: 1px solid #ccc;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
-            position: absolute;
-        }
-        #sec-location .p-left {
-            left: 5%;
-            bottom: 10%;
-            width: 300px;
-            height: 400px;
-            z-index: 5;
-        }
-        #sec-location .p-right {
-            right: 5%;
-            top: 20%;
-            width: 250px;
-            height: 450px;
-            z-index: 5;
-        }
-        #sec-location .mirror-text {
-            position: absolute;
-            right: 15%;
-            top: 10%;
-            transform: rotate(10deg);
-        }
-        #sec-location .map-container {
-            position: absolute;
-            width: 400px;
-            height: 300px;
-            background: url('https://www.transparenttextures.com/patterns/cream-paper.png') #e8e4c9;
-            border: 4px solid #000;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-        .map-pin {
-            width: 40px;
-            height: 40px;
-            background: var(--accent-red);
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            position: absolute;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3), 5px 5px 5px rgba(0,0,0,0.4);
-            animation: bounce 2s infinite ease-in-out;
-        }
-        .dashed-path {
-            position: absolute;
-            bottom: 20%;
-            width: 50%;
-            height: 100px;
-            border-bottom: 4px dashed #000;
-            border-radius: 50%;
-            transform: rotate(-10deg);
-            z-index: 1;
-        }
-
-        /* --- Section 3: Arrow Branches (Based on Image 3) --- */
-        #sec-branch .text-block {
-            position: absolute;
-            top: 15%;
-            left: 5%;
-            max-width: 350px;
-        }
-        #sec-branch .origin-img {
-            position: absolute;
-            bottom: 10%;
-            left: 15%;
-            width: 350px;
-            height: 350px;
-            border-radius: 30px 0 30px 0;
-            z-index: 10;
-        }
-        #sec-branch .target-img {
-            position: absolute;
-            width: 300px;
-            height: 200px;
-        }
-        #sec-branch .t1 { top: 10%; right: 10%; }
-        #sec-branch .t2 { top: 40%; right: 20%; }
-        #sec-branch .t3 { bottom: 10%; right: 10%; }
-        
-        .arrow-svg {
+        /* SVG Arrow drawing mechanics */
+        .doodle-svg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 10;
         }
-        path.line {
+        .doodle-line {
             fill: none;
-            stroke: #000;
-            stroke-width: 4;
+            stroke: #222;
+            stroke-width: 5;
             stroke-linecap: round;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            transition: stroke-dashoffset 2s ease-out;
+            stroke-linejoin: round;
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .visible path.line { stroke-dashoffset: 0; }
+        .visible .doodle-line { stroke-dashoffset: 0; }
 
-        /* --- Section 4: Asymmetric Collage (Based on Image 4) --- */
-        #sec-collage {
+        /* Animation Keyframes */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(calc(var(--rot) * 1deg)); }
+            100% { transform: translateY(-15px) rotate(calc(var(--rot) * 1.5deg)); }
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop { animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; }
+
+        /* =========================================
+           SCENE 1: "Week 1" Layout (From Image 3)
+           ========================================= */
+        #scene-week1 .person-cutout {
+            position: absolute; bottom: 0; left: 10%;
+            width: 450px; height: auto;
+            z-index: 5; --rot: -2;
+        }
+        #scene-week1 .desktop-ui {
+            position: absolute; top: 10%; left: 25%;
+            width: 400px; height: 250px; border-radius: 8px;
+            z-index: 4; --rot: 3;
+        }
+        #scene-week1 .mobile-ui {
+            position: absolute; top: 15%; right: 15%;
+            width: 220px; height: 450px; border-radius: 20px;
+            z-index: 4; --rot: -4;
+        }
+        #scene-week1 .week-title {
+            position: absolute; top: 40%; left: 45%;
+            font-size: 8rem; z-index: 6; transform: rotate(-10deg);
+        }
+        #scene-week1 .text-bottom-right {
+            position: absolute; bottom: 10%; right: 10%;
+            width: 400px; text-align: right; z-index: 6;
+        }
+
+        /* =========================================
+           SCENE 2: "Location" Layout (From Image 4)
+           ========================================= */
+        #scene-location .title-location {
+            position: absolute; top: 10%; left: 10%;
+            font-size: 5rem; z-index: 6;
+        }
+        #scene-location .img-building {
+            position: absolute; bottom: 10%; left: 10%;
+            width: 280px; height: 450px;
+            z-index: 4; --rot: 0; border: 10px solid white;
+        }
+        #scene-location .map-doodle {
+            position: absolute; top: 10%; left: 35%;
+            width: 350px; height: 250px;
+            background: #e9e5cd; border: 4px solid #333; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 4; --rot: 2;
+        }
+        #scene-location .address-input {
+            position: absolute; top: 45%; left: 40%;
+            font-size: 2.5rem; z-index: 5;
+        }
+        #scene-location .title-mirror {
+            position: absolute; top: 15%; right: 25%;
+            font-size: 3rem; transform: rotate(10deg); z-index: 6;
+        }
+        #scene-location .camera-icon {
+            position: absolute; top: 15%; right: 15%;
+            width: 80px; transform: rotate(15deg); z-index: 6;
+        }
+        #scene-location .img-mirror {
+            position: absolute; bottom: 10%; right: 10%;
+            width: 250px; height: 450px;
+            z-index: 4; --rot: -2; border: 10px solid white;
+        }
+        #scene-location .arrived-text {
+            position: absolute; bottom: 25%; left: 45%;
+            font-size: 2.5rem; transform: rotate(-5deg); z-index: 6;
+        }
+        .red-pin {
+            width: 30px; height: 30px; background: var(--pin-red);
+            border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+            position: absolute; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.3);
+        }
+
+        /* =========================================
+           SCENE 3: "Branching Arrows" (From Image 1)
+           ========================================= */
+        #scene-branch .text-left {
+            position: absolute; top: 15%; left: 5%;
+            width: 350px; z-index: 5;
+        }
+        #scene-branch .circle-dude {
+            position: absolute; top: 35%; left: 15%;
+            width: 350px; height: 350px; border-radius: 50%;
+            z-index: 6; --rot: 0; box-shadow: 10px 10px 0px #eee;
+        }
+        #scene-branch .right-stack {
+            position: absolute; top: 10%; right: 10%;
+            display: flex; flex-direction: column; gap: 30px;
+            z-index: 5;
+        }
+        #scene-branch .right-stack img {
+            width: 350px; height: 200px; border-radius: 10px; --rot: 0;
+        }
+
+        /* =========================================
+           SCENE 4: "Collage Grid" (From Image 2)
+           ========================================= */
+        #scene-collage {
             display: grid;
             grid-template-columns: 1fr 1.5fr 1fr;
             gap: 20px;
-            padding: 100px 5vw;
+            padding: 10vh 5vw;
             align-items: center;
         }
-        .col-left {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .col-left img { width: 100%; height: 300px; }
-        .col-center img { width: 100%; height: 600px; }
-        .col-right p {
-            height: 600px;
-            overflow-y: auto;
-            transform: rotate(2deg);
-        }
-
-        /* Animations */
-        @keyframes bounce {
-            0%, 100% { transform: rotate(-45deg) translate(0, 0); }
-            50% { transform: rotate(-45deg) translate(10px, -10px); }
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+        #scene-collage .col { display: flex; flex-direction: column; gap: 20px; }
+        #scene-collage .img-small { width: 100%; height: 30vh; --rot: -2; }
+        #scene-collage .img-large { width: 100%; height: 65vh; --rot: 1; }
+        #scene-collage .text-col { height: 65vh; padding-left: 20px; }
     </style>
 </head>
 <body>
 
-    <section id="sec-week1">
-        <h1 class="marker-text marker-title fade-in parallax" data-speed="2">Week 1</h1>
+    <section id="scene-week1">
+        <img src="https://picsum.photos/600/500?random=1" class="img-ph person-cutout animate-pop" style="animation-delay: 0.1s;" alt="Person holding laptop">
+        <img src="https://picsum.photos/600/400?random=2" class="img-ph desktop-ui animate-pop" style="animation-delay: 0.3s;" alt="Desktop POS UI">
+        <img src="https://picsum.photos/300/600?random=3" class="img-ph mobile-ui animate-pop" style="animation-delay: 0.5s;" alt="Mobile UI">
         
-        <img src="https://picsum.photos/600/400?random=1" class="img-placeholder desktop-ui fade-in parallax" data-speed="-3" data-rot="5" alt="Desktop POS">
+        <h1 class="handwritten week-title animate-pop" style="animation-delay: 0.7s;">Week 1</h1>
         
-        <img src="https://picsum.photos/400/400?random=2" class="img-placeholder center-dude fade-in parallax" data-speed="1" data-rot="-2" alt="Person Presenting">
-        
-        <img src="https://picsum.photos/300/600?random=3" class="img-placeholder mobile-ui fade-in parallax" data-speed="-4" data-rot="-5" alt="Mobile POS">
-        
-        <p class="text-block fade-in parallax" data-speed="2" data-rot="2">
-            <strong>Project Initialization:</strong><br>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        </p>
-
-        <svg class="arrow-svg" preserveAspectRatio="none">
-            <path class="line" d="M 40vw 50vh Q 30vw 20vh 25vw 25vh" />
-            <path class="line" d="M 60vw 50vh Q 70vw 30vh 80vw 35vh" />
-        </svg>
-    </section>
-
-    <section id="sec-location">
-        <h2 class="marker-text title fade-in parallax" data-speed="-2">Location</h2>
-        <h2 class="marker-text mirror-text fade-in parallax" data-speed="3">Mirror Shot 📸</h2>
-
-        <div class="polaroid p-left fade-in parallax" data-speed="2" data-rot="-8">
-            <img src="https://picsum.photos/400/500?random=4" class="img-placeholder" style="width: 100%; height: 100%; border:none; box-shadow:none;" alt="Outside Location">
+        <div class="text-block text-bottom-right animate-pop" style="animation-delay: 0.9s;">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
 
-        <div class="map-container fade-in parallax" data-speed="1" data-rot="3">
-            <h3 style="font-size: 2rem; color: #555;">[Input Address Here]</h3>
-            <div class="map-pin" style="top: 20%; left: 40%;"></div>
-        </div>
-        
-        <div class="dashed-path fade-in"></div>
-        <div class="map-pin" style="bottom: 15%; left: 20%; background: var(--accent-blue);"></div>
-        <div class="marker-text" style="bottom: 25%; left: 30%; font-size: 3rem; transform: rotate(-5deg);">I have arrived</div>
-
-        <div class="polaroid p-right fade-in parallax" data-speed="-1" data-rot="6">
-            <img src="https://picsum.photos/400/600?random=5" class="img-placeholder" style="width: 100%; height: 100%; border:none; box-shadow:none;" alt="Mirror Shot">
-        </div>
-    </section>
-
-    <section id="sec-branch">
-        <p class="text-block fade-in parallax" data-speed="-2" data-rot="-2">
-            <strong>System Breakdown:</strong><br>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-
-        <img src="https://picsum.photos/500/500?random=6" class="img-placeholder origin-img fade-in parallax" data-speed="1" data-rot="2" alt="User Working">
-
-        <img src="https://picsum.photos/400/300?random=7" class="img-placeholder target-img t1 fade-in parallax" data-speed="-3" data-rot="4" alt="Reverse Pitching">
-        <img src="https://picsum.photos/400/300?random=8" class="img-placeholder target-img t2 fade-in parallax" data-speed="-2" data-rot="-3" alt="15 Days Dashboard">
-        <img src="https://picsum.photos/400/300?random=9" class="img-placeholder target-img t3 fade-in parallax" data-speed="-4" data-rot="5" alt="Meeting Room">
-
-        <svg class="arrow-svg" preserveAspectRatio="none">
-            <path class="line" d="M 35vw 75vh Q 50vw 40vh 80vw 20vh" marker-end="url(#arrowhead)"/>
-            <path class="line" d="M 40vw 80vh L 75vw 50vh" marker-end="url(#arrowhead)"/>
-            <path class="line" d="M 35vw 85vh Q 50vw 90vh 85vw 80vh" marker-end="url(#arrowhead)"/>
+        <svg class="doodle-svg" preserveAspectRatio="none">
             <defs>
-                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                  <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#222" />
                 </marker>
-              </defs>
+            </defs>
+            <path class="doodle-line" d="M 25vw 50vh Q 15vw 30vh 23vw 22vh" marker-end="url(#arrow)" />
+            <path class="doodle-line" d="M 55vw 22vh L 75vw 25vh" marker-end="url(#arrow)" />
         </svg>
     </section>
 
-    <section id="sec-collage">
-        <div class="col-left">
-            <img src="https://picsum.photos/400/400?random=10" class="img-placeholder fade-in parallax" data-speed="2" data-rot="-4" alt="Collage 1">
-            <img src="https://picsum.photos/400/400?random=11" class="img-placeholder fade-in parallax" data-speed="-1" data-rot="3" alt="Collage 2">
+    <section id="scene-location">
+        <h1 class="handwritten title-location animate-pop">Location</h1>
+        
+        <img src="https://picsum.photos/400/700?random=4" class="img-ph img-building animate-pop" alt="Building exterior">
+        
+        <div class="map-doodle animate-pop">
+            <div class="red-pin" style="top: 30%; left: 45%; animation: bounce 2s infinite;"></div>
+            <svg style="width:100%; height:100%; position:absolute;"><path d="M50,50 Q150,100 250,50 T350,150" fill="none" stroke="#888" stroke-width="3"/></svg>
         </div>
-        <div class="col-center">
-            <img src="https://picsum.photos/600/800?random=12" class="img-placeholder fade-in parallax" data-speed="1" data-rot="-1" alt="Main Collage Focus">
+        
+        <h2 class="handwritten address-input animate-pop">[input address here]</h2>
+        <h2 class="handwritten title-mirror animate-pop">Mirror Shot</h2>
+        
+        <svg class="camera-icon animate-pop" viewBox="0 0 100 100">
+            <rect x="10" y="30" width="80" height="50" rx="5" fill="#f4d03f" stroke="#333" stroke-width="4"/>
+            <circle cx="50" cy="55" r="15" fill="#fff" stroke="#333" stroke-width="4"/>
+            <rect x="70" y="20" width="15" height="10" fill="#333"/>
+        </svg>
+
+        <img src="https://picsum.photos/400/800?random=5" class="img-ph img-mirror animate-pop" alt="Mirror Selfie">
+        
+        <h2 class="handwritten arrived-text animate-pop">I have arrived</h2>
+        
+        <div class="red-pin" style="bottom: 10%; left: 35%; z-index: 10;"></div>
+        <div class="red-pin" style="bottom: 25%; left: 65%; z-index: 10;"></div>
+        
+        <svg class="doodle-svg" preserveAspectRatio="none">
+            <path class="doodle-line" style="stroke-dasharray: 15, 15;" d="M 36vw 88vh Q 50vw 95vh 66vw 75vh" />
+        </svg>
+    </section>
+
+    <section id="scene-branch">
+        <div class="text-block text-left animate-pop">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
-        <div class="col-right">
-            <p class="fade-in parallax" data-speed="-2">
-                <strong>Project Conclusion & Execution:</strong><br><br>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br><br>
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<br><br>
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
+
+        <img src="https://picsum.photos/500/500?random=6" class="img-ph circle-dude animate-pop" alt="Person working">
+
+        <div class="right-stack">
+            <img src="https://picsum.photos/500/300?random=7" class="img-ph animate-pop" style="animation-delay: 0.2s;" alt="Reverse Pitching">
+            <img src="https://picsum.photos/500/300?random=8" class="img-ph animate-pop" style="animation-delay: 0.4s;" alt="Laptop code">
+            <img src="https://picsum.photos/500/300?random=9" class="img-ph animate-pop" style="animation-delay: 0.6s;" alt="Meeting room">
+        </div>
+
+        <svg class="doodle-svg" preserveAspectRatio="none">
+            <path class="doodle-line" d="M 38vw 40vh Q 55vw 20vh 68vw 15vh" marker-end="url(#arrow)" />
+            <path class="doodle-line" d="M 40vw 50vh L 68vw 50vh" marker-end="url(#arrow)" />
+            <path class="doodle-line" d="M 38vw 60vh Q 55vw 80vh 68vw 85vh" marker-end="url(#arrow)" />
+        </svg>
+    </section>
+
+    <section id="scene-collage">
+        <div class="col">
+            <img src="https://picsum.photos/400/400?random=10" class="img-ph img-small animate-pop" alt="Two people working">
+            <img src="https://picsum.photos/400/400?random=11" class="img-ph img-small animate-pop" style="animation-delay: 0.2s;" alt="Person in room">
+        </div>
+        <div class="col">
+            <img src="https://picsum.photos/700/900?random=12" class="img-ph img-large animate-pop" style="animation-delay: 0.4s;" alt="Person showing UI screen">
+        </div>
+        <div class="col text-col text-block animate-pop" style="animation-delay: 0.6s;">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<br><br>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<br><br>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
     </section>
 
     <script>
-        // 1. Mouse Move Parallax Effect (Chaotic shifting)
-        document.addEventListener('mousemove', function(e) {
-            const parallaxElements = document.querySelectorAll('.parallax');
-            const x = (e.clientX / window.innerWidth) - 0.5;
-            const y = (e.clientY / window.innerHeight) - 0.5;
-
-            parallaxElements.forEach(el => {
-                const speed = parseFloat(el.getAttribute('data-speed')) || 1;
-                // Update CSS variables for translation, keeping the original CSS rotation intact
-                el.style.setProperty('--px', `${x * speed * 30}px`);
-                el.style.setProperty('--py', `${y * speed * 30}px`);
-                
-                // Initialize default rotation if it exists
-                if(el.hasAttribute('data-rot')) {
-                    el.style.setProperty('--rot', `${el.getAttribute('data-rot')}deg`);
-                }
-            });
-        });
-
-        // 2. Intersection Observer for Scroll Animations (Fade ins and SVG line drawing)
-        const observerOptions = {
-            threshold: 0.2,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
+        // Intersection Observer to trigger CSS animations and draw SVGs exactly when scrolled into view
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    // Reveal elements
+                    const popElements = entry.target.querySelectorAll('.animate-pop');
+                    popElements.forEach(el => el.style.animationPlayState = 'running');
                     
-                    // If the section comes into view, draw its SVG arrows
-                    if(entry.target.tagName === 'SECTION') {
-                        const svgs = entry.target.querySelectorAll('.arrow-svg');
-                        svgs.forEach(svg => svg.classList.add('visible'));
-                    }
+                    // Draw SVG lines
+                    entry.target.classList.add('visible');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.3 }); // Triggers when 30% of the section is visible
 
-        // Observe fade-in elements
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Observe sections to trigger SVG animations
+        // Initialize elements
         document.querySelectorAll('section').forEach(sec => {
+            // Pause animations initially
+            const popElements = sec.querySelectorAll('.animate-pop');
+            popElements.forEach(el => el.style.animationPlayState = 'paused');
+            
             observer.observe(sec);
         });
+
+        // Add bounce keyframe for map pin
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes bounce {
+                0%, 100% { transform: rotate(-45deg) translateY(0); }
+                50% { transform: rotate(-45deg) translateY(-10px); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>
