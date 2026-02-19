@@ -3,325 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Scrapbook Journey</title>
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+    <title>Organized Dynamic Scrapbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fdfdfc;
-            --text-main: #222;
-            --doodle-yellow: #f4d03f;
-            --pin-red: #e74c3c;
+            --bg-color: #f4f1ea; /* Soft paper color */
+            --text-main: #2b2b2b;
+            --accent-yellow: #ffd93d;
+            --accent-red: #ff5757;
+            --tape-color: rgba(255, 255, 255, 0.6);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: var(--bg-color);
+            background-image: radial-gradient(#d5d1c4 1px, transparent 1px);
+            background-size: 20px 20px;
             color: var(--text-main);
             font-family: 'Space Grotesk', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Typography & Shared Styles */
-        .handwritten {
+        /* --- Typography --- */
+        .doodle-text {
             font-family: 'Patrick Hand', cursive;
-            color: #333;
-            text-shadow: 2px 2px 0px var(--doodle-yellow), 4px 4px 0px rgba(0,0,0,0.1);
+            color: #111;
+            line-height: 1;
         }
 
-        .text-block {
+        .highlight {
+            position: relative;
+            display: inline-block;
+        }
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 5px; left: -5px; right: -5px; height: 15px;
+            background: var(--accent-yellow);
+            z-index: -1;
+            transform: rotate(-2deg);
+        }
+
+        p {
             font-size: 1.1rem;
             line-height: 1.6;
-            color: #444;
-            background: transparent;
-        }
-
-        .img-ph {
-            object-fit: cover;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* Chaotic floating animation variable */
-            animation: float 6s ease-in-out infinite alternate;
-        }
-
-        .img-ph:hover {
-            transform: scale(1.05) rotate(0deg) !important;
-            box-shadow: 10px 10px 25px rgba(0,0,0,0.3);
-            z-index: 100;
-        }
-
-        section {
-            position: relative;
-            width: 100vw;
-            min-height: 100vh;
-            border-bottom: 2px dashed #ddd;
-            overflow: hidden;
+            background: white;
             padding: 20px;
+            border-radius: 8px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05), 0 0 10px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
         }
 
-        /* SVG Arrow drawing mechanics */
-        .doodle-svg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
+        /* --- Structural Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 120px; /* Large gaps between scenes */
+        }
+
+        .scene {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* --- Photo Styling & Tape --- */
+        .photo {
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            position: relative;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transform: rotate(var(--rot, 0deg));
+            z-index: 2;
+        }
+        
+        .photo img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid #eee;
+        }
+
+        .photo:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
             z-index: 10;
         }
-        .doodle-line {
-            fill: none;
-            stroke: #222;
-            stroke-width: 5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-dasharray: 2000;
-            stroke-dashoffset: 2000;
-            transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .visible .doodle-line { stroke-dashoffset: 0; }
 
-        /* Animation Keyframes */
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(calc(var(--rot) * 1deg)); }
-            100% { transform: translateY(-15px) rotate(calc(var(--rot) * 1.5deg)); }
+        /* Masking Tape effect */
+        .photo::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 80px; height: 25px;
+            background: var(--tape-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 3;
+            backdrop-filter: blur(2px);
         }
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.8) translateY(50px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .animate-pop { animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; }
 
-        /* =========================================
-           SCENE 1: "Week 1" Layout (From Image 3)
-           ========================================= */
-        #scene-week1 .person-cutout {
-            position: absolute; bottom: 0; left: 10%;
-            width: 450px; height: auto;
-            z-index: 5; --rot: -2;
+        /* --- Dynamic Animations --- */
+        .float { animation: floating 6s ease-in-out infinite alternate; }
+        .float-delay { animation: floating 7s ease-in-out infinite alternate-reverse; }
+
+        @keyframes floating {
+            0% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+            100% { transform: translateY(-10px) rotate(calc(var(--rot, 0deg) + 2deg)); }
         }
-        #scene-week1 .desktop-ui {
-            position: absolute; top: 10%; left: 25%;
-            width: 400px; height: 250px; border-radius: 8px;
-            z-index: 4; --rot: 3;
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        #scene-week1 .mobile-ui {
-            position: absolute; top: 15%; right: 15%;
-            width: 220px; height: 450px; border-radius: 20px;
-            z-index: 4; --rot: -4;
-        }
-        #scene-week1 .week-title {
-            position: absolute; top: 40%; left: 45%;
-            font-size: 8rem; z-index: 6; transform: rotate(-10deg);
-        }
-        #scene-week1 .text-bottom-right {
-            position: absolute; bottom: 10%; right: 10%;
-            width: 400px; text-align: right; z-index: 6;
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         /* =========================================
-           SCENE 2: "Location" Layout (From Image 4)
+           SCENE 1: Week 1 
            ========================================= */
-        #scene-location .title-location {
-            position: absolute; top: 10%; left: 10%;
-            font-size: 5rem; z-index: 6;
+        .s1-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 40px;
+            align-items: center;
         }
-        #scene-location .img-building {
-            position: absolute; bottom: 10%; left: 10%;
-            width: 280px; height: 450px;
-            z-index: 4; --rot: 0; border: 10px solid white;
+        .s1-left { display: flex; flex-direction: column; gap: 20px; }
+        .s1-right { position: relative; height: 500px; }
+        
+        .s1-title { font-size: 6rem; transform: rotate(-5deg); }
+        .s1-person { width: 300px; border-radius: 50%; border: 8px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        .s1-desk-ui { position: absolute; top: 0; left: 0; width: 80%; --rot: 2deg; }
+        .s1-mob-ui { position: absolute; bottom: -20px; right: 0; width: 45%; --rot: -4deg; z-index: 5; }
+
+        /* =========================================
+           SCENE 2: Location Map
+           ========================================= */
+        .s2-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 30px;
+            align-items: center;
         }
-        #scene-location .map-doodle {
-            position: absolute; top: 10%; left: 35%;
-            width: 350px; height: 250px;
-            background: #e9e5cd; border: 4px solid #333; border-radius: 10px;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 4; --rot: 2;
+        .s2-polaroid { width: 100%; --rot: -3deg; }
+        .s2-polaroid.right { --rot: 4deg; }
+        
+        .map-wrapper {
+            background: #fffdf5;
+            border: 3px solid #333;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.8);
+            --rot: 1deg;
         }
-        #scene-location .address-input {
-            position: absolute; top: 45%; left: 40%;
-            font-size: 2.5rem; z-index: 5;
-        }
-        #scene-location .title-mirror {
-            position: absolute; top: 15%; right: 25%;
-            font-size: 3rem; transform: rotate(10deg); z-index: 6;
-        }
-        #scene-location .camera-icon {
-            position: absolute; top: 15%; right: 15%;
-            width: 80px; transform: rotate(15deg); z-index: 6;
-        }
-        #scene-location .img-mirror {
-            position: absolute; bottom: 10%; right: 10%;
-            width: 250px; height: 450px;
-            z-index: 4; --rot: -2; border: 10px solid white;
-        }
-        #scene-location .arrived-text {
-            position: absolute; bottom: 25%; left: 45%;
-            font-size: 2.5rem; transform: rotate(-5deg); z-index: 6;
-        }
-        .red-pin {
-            width: 30px; height: 30px; background: var(--pin-red);
+        .pin {
+            width: 30px; height: 30px; background: var(--accent-red);
             border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
-            position: absolute; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.3);
+            position: absolute; top: -15px; left: 50%; margin-left: -15px;
+            box-shadow: inset -4px -4px 6px rgba(0,0,0,0.3), 4px 4px 6px rgba(0,0,0,0.2);
+            animation: bounce 2s infinite;
         }
+        @keyframes bounce { 0%, 100% { transform: rotate(-45deg) translateY(0); } 50% { transform: rotate(-45deg) translateY(-10px); } }
 
         /* =========================================
-           SCENE 3: "Branching Arrows" (From Image 1)
+           SCENE 3: Branching System
            ========================================= */
-        #scene-branch .text-left {
-            position: absolute; top: 15%; left: 5%;
-            width: 350px; z-index: 5;
+        .s3-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 40px;
+            align-items: center;
         }
-        #scene-branch .circle-dude {
-            position: absolute; top: 35%; left: 15%;
-            width: 350px; height: 350px; border-radius: 50%;
-            z-index: 6; --rot: 0; box-shadow: 10px 10px 0px #eee;
-        }
-        #scene-branch .right-stack {
-            position: absolute; top: 10%; right: 10%;
-            display: flex; flex-direction: column; gap: 30px;
-            z-index: 5;
-        }
-        #scene-branch .right-stack img {
-            width: 350px; height: 200px; border-radius: 10px; --rot: 0;
-        }
+        .s3-center { width: 350px; height: 350px; border-radius: 20px; object-fit: cover; border: 8px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.15); --rot: -2deg; }
+        .s3-stack { display: flex; flex-direction: column; gap: 20px; }
+        .s3-stack .photo { width: 100%; height: 200px; }
+        .s3-stack .photo img { height: 100%; object-fit: cover; }
+        .s3-stack .photo:nth-child(1) { --rot: 2deg; }
+        .s3-stack .photo:nth-child(2) { --rot: -1deg; }
+        .s3-stack .photo:nth-child(3) { --rot: 3deg; }
+
+        /* Hand-drawn inline arrows for structure */
+        .inline-arrow { width: 80px; opacity: 0.6; }
 
         /* =========================================
-           SCENE 4: "Collage Grid" (From Image 2)
+           SCENE 4: Collage Grid
            ========================================= */
-        #scene-collage {
+        .s4-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr 1fr;
             gap: 20px;
-            padding: 10vh 5vw;
             align-items: center;
         }
-        #scene-collage .col { display: flex; flex-direction: column; gap: 20px; }
-        #scene-collage .img-small { width: 100%; height: 30vh; --rot: -2; }
-        #scene-collage .img-large { width: 100%; height: 65vh; --rot: 1; }
-        #scene-collage .text-col { height: 65vh; padding-left: 20px; }
+        .s4-col { display: flex; flex-direction: column; gap: 20px; }
+        .s4-img-small { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); --rot: -2deg; }
+        .s4-img-small:nth-child(2) { --rot: 2deg; }
+        .s4-img-main { width: 100%; height: 600px; object-fit: cover; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); --rot: 1deg; }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .s1-grid, .s2-grid, .s3-grid, .s4-grid { grid-template-columns: 1fr; }
+            .s1-right { height: 400px; margin-top: 30px; }
+            .inline-arrow { display: none; } /* Hide structural arrows on mobile */
+            .s3-center { width: 100%; height: auto; }
+        }
     </style>
 </head>
 <body>
 
-    <section id="scene-week1">
-        <img src="https://picsum.photos/600/500?random=1" class="img-ph person-cutout animate-pop" style="animation-delay: 0.1s;" alt="Person holding laptop">
-        <img src="https://picsum.photos/600/400?random=2" class="img-ph desktop-ui animate-pop" style="animation-delay: 0.3s;" alt="Desktop POS UI">
-        <img src="https://picsum.photos/300/600?random=3" class="img-ph mobile-ui animate-pop" style="animation-delay: 0.5s;" alt="Mobile UI">
+    <div class="container">
         
-        <h1 class="handwritten week-title animate-pop" style="animation-delay: 0.7s;">Week 1</h1>
-        
-        <div class="text-block text-bottom-right animate-pop" style="animation-delay: 0.9s;">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </div>
+        <section class="scene s1-grid">
+            <div class="s1-left reveal">
+                <h1 class="doodle-text s1-title highlight">Week 1</h1>
+                <p><strong>Project Initialization:</strong><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+                <img src="https://picsum.photos/400/400?random=1" class="s1-person float" alt="Person Working">
+            </div>
+            <div class="s1-right reveal" style="transition-delay: 0.2s;">
+                <div class="photo s1-desk-ui float">
+                    <img src="https://picsum.photos/600/350?random=2" alt="Desktop UI">
+                </div>
+                <div class="photo s1-mob-ui float-delay">
+                    <img src="https://picsum.photos/300/500?random=3" alt="Mobile UI">
+                </div>
+            </div>
+        </section>
 
-        <svg class="doodle-svg" preserveAspectRatio="none">
-            <defs>
-                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#222" />
-                </marker>
-            </defs>
-            <path class="doodle-line" d="M 25vw 50vh Q 15vw 30vh 23vw 22vh" marker-end="url(#arrow)" />
-            <path class="doodle-line" d="M 55vw 22vh L 75vw 25vh" marker-end="url(#arrow)" />
-        </svg>
-    </section>
+        <section class="scene s2-grid">
+            <div class="reveal">
+                <h2 class="doodle-text" style="font-size: 3rem; margin-bottom: 10px;">Location</h2>
+                <div class="photo s2-polaroid float">
+                    <img src="https://picsum.photos/400/500?random=4" alt="Building Exterior">
+                </div>
+            </div>
+            
+            <div class="map-wrapper reveal float-delay" style="transition-delay: 0.2s;">
+                <div class="pin"></div>
+                <h3 class="doodle-text highlight" style="font-size: 2.5rem; margin-bottom: 20px;">[Input Address]</h3>
+                <svg viewBox="0 0 200 50" style="width: 100%; height: 50px; overflow: visible;">
+                    <path d="M 0 25 Q 50 50 100 25 T 200 25" fill="none" stroke="#222" stroke-width="3" stroke-dasharray="8,8"/>
+                </svg>
+                <h3 class="doodle-text" style="font-size: 2rem; transform: rotate(-5deg); margin-top: 20px;">I have arrived!</h3>
+            </div>
 
-    <section id="scene-location">
-        <h1 class="handwritten title-location animate-pop">Location</h1>
-        
-        <img src="https://picsum.photos/400/700?random=4" class="img-ph img-building animate-pop" alt="Building exterior">
-        
-        <div class="map-doodle animate-pop">
-            <div class="red-pin" style="top: 30%; left: 45%; animation: bounce 2s infinite;"></div>
-            <svg style="width:100%; height:100%; position:absolute;"><path d="M50,50 Q150,100 250,50 T350,150" fill="none" stroke="#888" stroke-width="3"/></svg>
-        </div>
-        
-        <h2 class="handwritten address-input animate-pop">[input address here]</h2>
-        <h2 class="handwritten title-mirror animate-pop">Mirror Shot</h2>
-        
-        <svg class="camera-icon animate-pop" viewBox="0 0 100 100">
-            <rect x="10" y="30" width="80" height="50" rx="5" fill="#f4d03f" stroke="#333" stroke-width="4"/>
-            <circle cx="50" cy="55" r="15" fill="#fff" stroke="#333" stroke-width="4"/>
-            <rect x="70" y="20" width="15" height="10" fill="#333"/>
-        </svg>
+            <div class="reveal" style="transition-delay: 0.4s; text-align: right;">
+                <h2 class="doodle-text" style="font-size: 3rem; margin-bottom: 10px;">Mirror Shot 📷</h2>
+                <div class="photo s2-polaroid right float">
+                    <img src="https://picsum.photos/400/500?random=5" alt="Mirror Selfie">
+                </div>
+            </div>
+        </section>
 
-        <img src="https://picsum.photos/400/800?random=5" class="img-ph img-mirror animate-pop" alt="Mirror Selfie">
-        
-        <h2 class="handwritten arrived-text animate-pop">I have arrived</h2>
-        
-        <div class="red-pin" style="bottom: 10%; left: 35%; z-index: 10;"></div>
-        <div class="red-pin" style="bottom: 25%; left: 65%; z-index: 10;"></div>
-        
-        <svg class="doodle-svg" preserveAspectRatio="none">
-            <path class="doodle-line" style="stroke-dasharray: 15, 15;" d="M 36vw 88vh Q 50vw 95vh 66vw 75vh" />
-        </svg>
-    </section>
+        <section class="scene s3-grid">
+            <div class="reveal">
+                <p><strong>System Breakdown:</strong><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed do eiusmod tempor incididunt ut labore.</p>
+            </div>
+            
+            <div class="reveal" style="transition-delay: 0.2s; display: flex; align-items: center; gap: 20px;">
+                <img src="https://picsum.photos/500/500?random=6" class="s3-center float" alt="Person Presenting">
+                
+                <svg class="inline-arrow float-delay" viewBox="0 0 100 200">
+                    <path d="M 10 100 Q 50 20 90 20" fill="none" stroke="#222" stroke-width="4" marker-end="url(#arrowhead)"/>
+                    <path d="M 10 100 L 90 100" fill="none" stroke="#222" stroke-width="4" marker-end="url(#arrowhead)"/>
+                    <path d="M 10 100 Q 50 180 90 180" fill="none" stroke="#222" stroke-width="4" marker-end="url(#arrowhead)"/>
+                    <defs>
+                        <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                            <polygon points="0 0, 6 3, 0 6" fill="#222" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
 
-    <section id="scene-branch">
-        <div class="text-block text-left animate-pop">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </div>
+            <div class="s3-stack reveal" style="transition-delay: 0.4s;">
+                <div class="photo float"><img src="https://picsum.photos/400/250?random=7" alt="Slide 1"></div>
+                <div class="photo float-delay"><img src="https://picsum.photos/400/250?random=8" alt="Slide 2"></div>
+                <div class="photo float"><img src="https://picsum.photos/400/250?random=9" alt="Slide 3"></div>
+            </div>
+        </section>
 
-        <img src="https://picsum.photos/500/500?random=6" class="img-ph circle-dude animate-pop" alt="Person working">
+        <section class="scene s4-grid">
+            <div class="s4-col reveal">
+                <img src="https://picsum.photos/400/400?random=10" class="s4-img-small float" alt="Collage 1">
+                <img src="https://picsum.photos/400/400?random=11" class="s4-img-small float-delay" alt="Collage 2">
+            </div>
+            <div class="s4-col reveal" style="transition-delay: 0.2s;">
+                <img src="https://picsum.photos/600/800?random=12" class="s4-img-main float" alt="Collage Main">
+            </div>
+            <div class="s4-col reveal" style="transition-delay: 0.4s;">
+                <p style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <strong style="font-size: 1.4rem; font-family: 'Patrick Hand', cursive; color: var(--accent-red);">Project Execution</strong><br><br>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br><br>
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.
+                </p>
+            </div>
+        </section>
 
-        <div class="right-stack">
-            <img src="https://picsum.photos/500/300?random=7" class="img-ph animate-pop" style="animation-delay: 0.2s;" alt="Reverse Pitching">
-            <img src="https://picsum.photos/500/300?random=8" class="img-ph animate-pop" style="animation-delay: 0.4s;" alt="Laptop code">
-            <img src="https://picsum.photos/500/300?random=9" class="img-ph animate-pop" style="animation-delay: 0.6s;" alt="Meeting room">
-        </div>
-
-        <svg class="doodle-svg" preserveAspectRatio="none">
-            <path class="doodle-line" d="M 38vw 40vh Q 55vw 20vh 68vw 15vh" marker-end="url(#arrow)" />
-            <path class="doodle-line" d="M 40vw 50vh L 68vw 50vh" marker-end="url(#arrow)" />
-            <path class="doodle-line" d="M 38vw 60vh Q 55vw 80vh 68vw 85vh" marker-end="url(#arrow)" />
-        </svg>
-    </section>
-
-    <section id="scene-collage">
-        <div class="col">
-            <img src="https://picsum.photos/400/400?random=10" class="img-ph img-small animate-pop" alt="Two people working">
-            <img src="https://picsum.photos/400/400?random=11" class="img-ph img-small animate-pop" style="animation-delay: 0.2s;" alt="Person in room">
-        </div>
-        <div class="col">
-            <img src="https://picsum.photos/700/900?random=12" class="img-ph img-large animate-pop" style="animation-delay: 0.4s;" alt="Person showing UI screen">
-        </div>
-        <div class="col text-col text-block animate-pop" style="animation-delay: 0.6s;">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<br><br>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.<br><br>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </div>
-    </section>
+    </div>
 
     <script>
-        // Intersection Observer to trigger CSS animations and draw SVGs exactly when scrolled into view
-        const observer = new IntersectionObserver((entries) => {
+        // Intersection Observer for smooth cascading reveals on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Reveal elements
-                    const popElements = entry.target.querySelectorAll('.animate-pop');
-                    popElements.forEach(el => el.style.animationPlayState = 'running');
-                    
-                    // Draw SVG lines
-                    entry.target.classList.add('visible');
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Unobserve to play animation only once
                 }
             });
-        }, { threshold: 0.3 }); // Triggers when 30% of the section is visible
+        }, observerOptions);
 
-        // Initialize elements
-        document.querySelectorAll('section').forEach(sec => {
-            // Pause animations initially
-            const popElements = sec.querySelectorAll('.animate-pop');
-            popElements.forEach(el => el.style.animationPlayState = 'paused');
-            
-            observer.observe(sec);
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
         });
-
-        // Add bounce keyframe for map pin
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = `
-            @keyframes bounce {
-                0%, 100% { transform: rotate(-45deg) translateY(0); }
-                50% { transform: rotate(-45deg) translateY(-10px); }
-            }
-        `;
-        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>
