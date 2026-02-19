@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organized Dynamic Scrapbook</title>
+    <title>Unified Editorial Scrapbook</title>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f4f1ea; /* Soft paper color */
+            --bg-color: #f4f1ea; 
             --text-main: #2b2b2b;
             --accent-yellow: #ffd93d;
-            --accent-red: #ff5757;
-            --tape-color: rgba(255, 255, 255, 0.6);
+            --tape-color: rgba(255, 255, 255, 0.7);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,79 +24,76 @@
             overflow-x: hidden;
         }
 
-        /* --- Typography --- */
-        .doodle-text {
-            font-family: 'Patrick Hand', cursive;
-            color: #111;
-            line-height: 1;
-        }
-
-        .highlight {
-            position: relative;
-            display: inline-block;
-        }
-        .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 5px; left: -5px; right: -5px; height: 15px;
-            background: var(--accent-yellow);
-            z-index: -1;
-            transform: rotate(-2deg);
-        }
-
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.05), 0 0 10px rgba(0,0,0,0.05);
-            border: 1px solid #eaeaea;
-        }
-
-        /* --- Structural Layout --- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 80px 20px;
             display: flex;
             flex-direction: column;
-            gap: 120px; /* Large gaps between scenes */
+            gap: 150px; /* Consistent spacing between all sections */
         }
 
-        .scene {
-            position: relative;
+        /* THE UNIFIED RULE: Every section is a matching-height Grid */
+        .grid-section {
+            display: grid;
+            gap: 30px;
+            align-items: stretch; /* This forces all columns to be the exact same height */
+            min-height: 60vh; /* Sets the baseline height for the block */
+        }
+
+        /* 2-Column and 3-Column variations */
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: 1fr 1.5fr 1fr; }
+
+        /* Unified Typography & Blocks */
+        .doodle-text { font-family: 'Patrick Hand', cursive; line-height: 1; }
+        
+        .text-block {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05), 0 0 10px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+            height: 100%; /* Stretches to fill the grid cell */
             display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
+            flex-direction: column;
+            justify-content: center; /* Centers text perfectly */
         }
 
-        /* --- Photo Styling & Tape --- */
+        /* Unified Photo Style (The Section 4 Aesthetic) */
+        .photo-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .photo {
             background: white;
             padding: 10px 10px 40px 10px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             position: relative;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
             transform: rotate(var(--rot, 0deg));
-            z-index: 2;
+            transition: transform 0.3s, z-index 0s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
         .photo img {
             width: 100%;
-            height: auto;
-            display: block;
+            height: 100%;
+            object-fit: cover; /* Prevents squishing, fills the matching height */
             border: 1px solid #eee;
         }
 
         .photo:hover {
-            transform: scale(1.05) rotate(0deg) !important;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            transform: scale(1.02) rotate(0deg) !important;
             z-index: 10;
         }
 
-        /* Masking Tape effect */
+        /* Tape Effect */
         .photo::before {
             content: '';
             position: absolute;
@@ -110,228 +106,89 @@
             backdrop-filter: blur(2px);
         }
 
-        /* --- Dynamic Animations --- */
-        .float { animation: floating 6s ease-in-out infinite alternate; }
-        .float-delay { animation: floating 7s ease-in-out infinite alternate-reverse; }
-
-        @keyframes floating {
-            0% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-            100% { transform: translateY(-10px) rotate(calc(var(--rot, 0deg) + 2deg)); }
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* =========================================
-           SCENE 1: Week 1 
-           ========================================= */
-        .s1-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 40px;
-            align-items: center;
-        }
-        .s1-left { display: flex; flex-direction: column; gap: 20px; }
-        .s1-right { position: relative; height: 500px; }
+        /* --- Section-Specific Faked "Chaos" inside the Grid --- */
         
-        .s1-title { font-size: 6rem; transform: rotate(-5deg); }
-        .s1-person { width: 300px; border-radius: 50%; border: 8px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
-        .s1-desk-ui { position: absolute; top: 0; left: 0; width: 80%; --rot: 2deg; }
-        .s1-mob-ui { position: absolute; bottom: -20px; right: 0; width: 45%; --rot: -4deg; z-index: 5; }
+        /* Section 1 */
+        .s1-overlap { position: absolute; width: 70%; height: 60%; top: -10%; right: -10%; z-index: 5; --rot: 4deg; }
+        .s1-main { --rot: -2deg; }
 
-        /* =========================================
-           SCENE 2: Location Map
-           ========================================= */
-        .s2-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr 1fr;
-            gap: 30px;
-            align-items: center;
+        /* Section 2 */
+        .map-box {
+            background: #fffdf5; border: 3px solid #333; border-radius: 15px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100%; box-shadow: 8px 8px 0 rgba(0,0,0,0.8); --rot: 1deg;
         }
-        .s2-polaroid { width: 100%; --rot: -3deg; }
-        .s2-polaroid.right { --rot: 4deg; }
-        
-        .map-wrapper {
-            background: #fffdf5;
-            border: 3px solid #333;
-            border-radius: 15px;
-            padding: 40px 20px;
-            text-align: center;
-            position: relative;
-            box-shadow: 8px 8px 0 rgba(0,0,0,0.8);
-            --rot: 1deg;
-        }
-        .pin {
-            width: 30px; height: 30px; background: var(--accent-red);
-            border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
-            position: absolute; top: -15px; left: 50%; margin-left: -15px;
-            box-shadow: inset -4px -4px 6px rgba(0,0,0,0.3), 4px 4px 6px rgba(0,0,0,0.2);
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce { 0%, 100% { transform: rotate(-45deg) translateY(0); } 50% { transform: rotate(-45deg) translateY(-10px); } }
 
-        /* =========================================
-           SCENE 3: Branching System
-           ========================================= */
-        .s3-grid {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-        .s3-center { width: 350px; height: 350px; border-radius: 20px; object-fit: cover; border: 8px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.15); --rot: -2deg; }
-        .s3-stack { display: flex; flex-direction: column; gap: 20px; }
-        .s3-stack .photo { width: 100%; height: 200px; }
-        .s3-stack .photo img { height: 100%; object-fit: cover; }
-        .s3-stack .photo:nth-child(1) { --rot: 2deg; }
-        .s3-stack .photo:nth-child(2) { --rot: -1deg; }
-        .s3-stack .photo:nth-child(3) { --rot: 3deg; }
+        /* Section 3 */
+        .s3-stack { display: flex; flex-direction: column; gap: 20px; height: 100%; }
+        .s3-stack .photo { height: 33.33%; /* Splits the 3 images perfectly */ }
 
-        /* Hand-drawn inline arrows for structure */
-        .inline-arrow { width: 80px; opacity: 0.6; }
-
-        /* =========================================
-           SCENE 4: Collage Grid
-           ========================================= */
-        .s4-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 20px;
-            align-items: center;
-        }
-        .s4-col { display: flex; flex-direction: column; gap: 20px; }
-        .s4-img-small { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); --rot: -2deg; }
-        .s4-img-small:nth-child(2) { --rot: 2deg; }
-        .s4-img-main { width: 100%; height: 600px; object-fit: cover; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); --rot: 1deg; }
-
-        /* Responsive Design */
-        @media (max-width: 900px) {
-            .s1-grid, .s2-grid, .s3-grid, .s4-grid { grid-template-columns: 1fr; }
-            .s1-right { height: 400px; margin-top: 30px; }
-            .inline-arrow { display: none; } /* Hide structural arrows on mobile */
-            .s3-center { width: 100%; height: auto; }
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
-        <section class="scene s1-grid">
-            <div class="s1-left reveal">
-                <h1 class="doodle-text s1-title highlight">Week 1</h1>
-                <p><strong>Project Initialization:</strong><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                <img src="https://picsum.photos/400/400?random=1" class="s1-person float" alt="Person Working">
+
+        <section class="grid-section grid-2">
+            <div class="text-block">
+                <h1 class="doodle-text" style="font-size: 5rem; color: #ff5757; margin-bottom: 20px;">Week 1</h1>
+                <p><strong>Project Initialization:</strong><br>By putting this in a strict grid, the text box is now exactly as tall as the images next to it. It looks clean, but we maintain the scrapbook vibe.</p>
             </div>
-            <div class="s1-right reveal" style="transition-delay: 0.2s;">
-                <div class="photo s1-desk-ui float">
-                    <img src="https://picsum.photos/600/350?random=2" alt="Desktop UI">
-                </div>
-                <div class="photo s1-mob-ui float-delay">
-                    <img src="https://picsum.photos/300/500?random=3" alt="Mobile UI">
-                </div>
+            <div class="photo-container">
+                <div class="photo s1-main"><img src="https://picsum.photos/600/600?random=1" alt="Desktop UI"></div>
+                <div class="photo s1-overlap"><img src="https://picsum.photos/300/400?random=2" alt="Mobile UI"></div>
             </div>
         </section>
 
-        <section class="scene s2-grid">
-            <div class="reveal">
-                <h2 class="doodle-text" style="font-size: 3rem; margin-bottom: 10px;">Location</h2>
-                <div class="photo s2-polaroid float">
-                    <img src="https://picsum.photos/400/500?random=4" alt="Building Exterior">
-                </div>
+        <section class="grid-section grid-3">
+            <div class="photo-container">
+                <h2 class="doodle-text" style="font-size: 3rem;">Location</h2>
+                <div class="photo" style="--rot: -3deg;"><img src="https://picsum.photos/400/600?random=3" alt="Exterior"></div>
             </div>
             
-            <div class="map-wrapper reveal float-delay" style="transition-delay: 0.2s;">
-                <div class="pin"></div>
-                <h3 class="doodle-text highlight" style="font-size: 2.5rem; margin-bottom: 20px;">[Input Address]</h3>
-                <svg viewBox="0 0 200 50" style="width: 100%; height: 50px; overflow: visible;">
-                    <path d="M 0 25 Q 50 50 100 25 T 200 25" fill="none" stroke="#222" stroke-width="3" stroke-dasharray="8,8"/>
-                </svg>
-                <h3 class="doodle-text" style="font-size: 2rem; transform: rotate(-5deg); margin-top: 20px;">I have arrived!</h3>
+            <div class="map-box" style="transform: rotate(var(--rot));">
+                <h3 class="doodle-text" style="font-size: 2.5rem;">[Input Address]</h3>
+                <div style="width: 40px; height: 40px; background: #ff5757; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); margin: 20px 0;"></div>
+                <h3 class="doodle-text" style="font-size: 2rem;">I have arrived!</h3>
             </div>
 
-            <div class="reveal" style="transition-delay: 0.4s; text-align: right;">
-                <h2 class="doodle-text" style="font-size: 3rem; margin-bottom: 10px;">Mirror Shot 📷</h2>
-                <div class="photo s2-polaroid right float">
-                    <img src="https://picsum.photos/400/500?random=5" alt="Mirror Selfie">
-                </div>
+            <div class="photo-container">
+                <h2 class="doodle-text" style="font-size: 3rem; text-align: right;">Mirror Shot</h2>
+                <div class="photo" style="--rot: 4deg;"><img src="https://picsum.photos/400/600?random=4" alt="Selfie"></div>
             </div>
         </section>
 
-        <section class="scene s3-grid">
-            <div class="reveal">
-                <p><strong>System Breakdown:</strong><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed do eiusmod tempor incididunt ut labore.</p>
+        <section class="grid-section grid-3">
+            <div class="text-block">
+                <p><strong>System Breakdown:</strong><br>Now the text, the center image, and the stack of three images on the right all perfectly align top-to-bottom. Nothing feels disjointed.</p>
             </div>
             
-            <div class="reveal" style="transition-delay: 0.2s; display: flex; align-items: center; gap: 20px;">
-                <img src="https://picsum.photos/500/500?random=6" class="s3-center float" alt="Person Presenting">
-                
-                <svg class="inline-arrow float-delay" viewBox="0 0 100 200">
-                    <path d="M 10 100 Q 50 20 90 20" fill="none" stroke="#222" stroke-width="4" marker-end="url(#arrowhead)"/>
-                    <path d="M 10 100 L 90 100" fill="none" stroke="#222" stroke-width="4" marker-end="url(#arrowhead)"/>
-                    <path d="M 10 100 Q 50 180 90 180" fill="none" stroke="#222" stroke-width="4" marker-end="url(#arrowhead)"/>
-                    <defs>
-                        <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                            <polygon points="0 0, 6 3, 0 6" fill="#222" />
-                        </marker>
-                    </defs>
-                </svg>
+            <div class="photo-container">
+                <div class="photo" style="border-radius: 50%; padding: 10px; --rot: -2deg;"><img src="https://picsum.photos/500/500?random=5" style="border-radius: 50%;" alt="Person"></div>
             </div>
 
-            <div class="s3-stack reveal" style="transition-delay: 0.4s;">
-                <div class="photo float"><img src="https://picsum.photos/400/250?random=7" alt="Slide 1"></div>
-                <div class="photo float-delay"><img src="https://picsum.photos/400/250?random=8" alt="Slide 2"></div>
-                <div class="photo float"><img src="https://picsum.photos/400/250?random=9" alt="Slide 3"></div>
+            <div class="s3-stack">
+                <div class="photo" style="--rot: 2deg;"><img src="https://picsum.photos/400/200?random=6" alt="Slide 1"></div>
+                <div class="photo" style="--rot: -1deg;"><img src="https://picsum.photos/400/200?random=7" alt="Slide 2"></div>
+                <div class="photo" style="--rot: 3deg;"><img src="https://picsum.photos/400/200?random=8" alt="Slide 3"></div>
             </div>
         </section>
 
-        <section class="scene s4-grid">
-            <div class="s4-col reveal">
-                <img src="https://picsum.photos/400/400?random=10" class="s4-img-small float" alt="Collage 1">
-                <img src="https://picsum.photos/400/400?random=11" class="s4-img-small float-delay" alt="Collage 2">
+        <section class="grid-section grid-3">
+            <div class="photo-container">
+                <div class="photo" style="height: 50%; --rot: -2deg;"><img src="https://picsum.photos/400/400?random=9" alt="Collage 1"></div>
+                <div class="photo" style="height: 50%; --rot: 2deg;"><img src="https://picsum.photos/400/400?random=10" alt="Collage 2"></div>
             </div>
-            <div class="s4-col reveal" style="transition-delay: 0.2s;">
-                <img src="https://picsum.photos/600/800?random=12" class="s4-img-main float" alt="Collage Main">
+            <div class="photo-container">
+                <div class="photo" style="--rot: 1deg;"><img src="https://picsum.photos/600/800?random=11" alt="Collage Main"></div>
             </div>
-            <div class="s4-col reveal" style="transition-delay: 0.4s;">
-                <p style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <strong style="font-size: 1.4rem; font-family: 'Patrick Hand', cursive; color: var(--accent-red);">Project Execution</strong><br><br>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <br><br>
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.
-                </p>
+            <div class="text-block">
+                <strong style="font-size: 1.4rem; font-family: 'Patrick Hand', cursive; color: #ff5757;">Project Execution</strong><br><br>
+                <p style="box-shadow: none; border: none; padding: 0;">By uniting the layout rules, the whole page feels like one beautiful editorial magazine spread rather than 4 separate websites glued together.</p>
             </div>
         </section>
 
     </div>
 
-    <script>
-        // Intersection Observer for smooth cascading reveals on scroll
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Unobserve to play animation only once
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
-    </script>
 </body>
 </html>
